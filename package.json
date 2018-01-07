@@ -1,0 +1,32 @@
+{
+  "name": "webgl-start",
+  "version": "1.0.0",
+  "description": "webgl practice",
+  "main": "index.js",
+  "scripts": {
+    "hello-world": "budo hello-world/index.js --live --open",
+    "particles": "budo particles/index.js:particles/bundle.js --live --debug",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Caged/webgl-start.git"
+  },
+  "keywords": [
+    "webgl"
+  ],
+  "author": "Justin Palmer",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/Caged/webgl-start/issues"
+  },
+  "homepage": "https://github.com/Caged/webgl-start#readme",
+  "dependencies": {
+    "budo": "^10.0.4",
+    "d3": "^4.12.2",
+    "regl": "^1.3.0"
+  },
+  "devDependencies": {
+    "shader-reload": "^1.2.2"
+  }
+}
