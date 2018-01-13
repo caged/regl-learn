@@ -1,6 +1,10 @@
 const regl = require('regl')(document.body)
 const shader = require('./index.shader');
 
+shader.on('change', () => {
+  console.log('Shader updated');
+})
+
 regl({
   frag: () => shader.fragment,
   vert: () => shader.vertex,
