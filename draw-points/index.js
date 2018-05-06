@@ -42,11 +42,7 @@ const loop = regl.frame(({ tick }) => {
     depth: 1
   });
 
-  drawPoints({
-    pointWidth,
-    stageWidth: width,
-    stageHeight: height
-  });
+  drawPoints({});
 
   // if (loop) {
   //   loop.cancel();
