@@ -1,25 +1,23 @@
-const regl = require('regl')(document.body)
-const shader = require('./index.shader');
+const c = document.getElementById('c')
+const gl = c.getContext('webgl')
 
-shader.on('change', () => {
-  console.log('Shader updated');
-})
+function createShader(gl, type, source) {
+  const shader = gl.createShader(type)
+  gl.shaderSource(shader, source)
+  gl.compileShader(shader)
+  const success = gl.getShaderParameter(shader, gl.COMPILE_STATUS);
+  if (success) {
+    return shader
+  }
 
-regl({
-  frag: () => shader.fragment,
-  vert: () => shader.vertex,
-  attributes: {
-    position: [
-      [-1, 1],
-      [1,  1],
-      [1, -1],
-      [-1, -1]
-    ]
-  },
+  console.log(gl.getShaderInfoLog(shader))
+  gl.deleteShader(shader)
+}
 
-  uniforms: {
-    color: [1, 0, 0, 1]
-  },
+const vsource = document.getElementById('vertex').text
+const fsource = document.getElementById('frag').text
 
-  count: 3
-})()
+const vshader = createShader(gl, gl.VERTEX_SHADER, vsource)
+const fshader = createShader(gl, gl.FRAGMENT_SHADER, fsource)
+
+console.log(vshader);

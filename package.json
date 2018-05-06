@@ -4,7 +4,9 @@
   "description": "webgl practice",
   "main": "index.js",
   "scripts": {
-    "hello-world": "glsl-server hello-world/index.js --title hello-world",
+    "hello-world": "glsl-server hello-world/index.js --dir hello-world --host 127.0.0.1 --title hello-world",
+    "regl-hello-world": "glsl-server regl-hello-world/index.js --host 127.0.0.1 --title regl-hello-world",
+    "draw-points": "glsl-server draw-points/index.js --host 127.0.0.1 --title draw-points",
     "uniforms": "glsl-server uniforms"
   },
   "repository": {
@@ -22,7 +24,8 @@
   "homepage": "https://github.com/Caged/webgl-start#readme",
   "dependencies": {
     "d3": "^4.12.2",
-    "regl": "^1.3.0"
+    "regl": "^1.3.0",
+    "three": "^0.89.0"
   },
   "devDependencies": {
     "perspective-camera": "^2.0.1",
