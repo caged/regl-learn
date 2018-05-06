@@ -1,39 +1,91 @@
 const regl = require("regl")(document.body);
 
-const drawTriangle = regl({
+var drawSpinningStretchyTriangle = regl({
   frag: `
-    precision mediump float;
-    uniform vec4 color;
+  void main() {
+    gl_FragColor = vec4(1, 0, 0, 1);
+  }`,
 
-    void main() {
-      gl_FragColor = color;
-    }
-  `,
   vert: `
-    precision mediump float;
-    attribute vec2 position;
+  attribute vec2 position;
+  uniform float angle, scale, width, height;
+  void main() {
+    float aspect = width / height;
+    gl_Position = vec4(
+      scale * (cos(angle) * position.x - sin(angle) * position.y),
+      aspect * scale * (sin(angle) * position.x + cos(angle) * position.y),
+      0,
+      1);
+  }`,
 
-    void main() {
-      gl_Position = vec4(position, 0, 1);
-    }
-  `,
   attributes: {
-    position: [[-1, 1], [1, 1], [1, -1]]
+    position: [[0, -1], [-1, 0], [1, 1]]
   },
 
   uniforms: {
-    color: regl.prop("color")
+    //
+    // Dynamic properties can be functions.  Each function gets passed:
+    //
+    //  * context: which contains data about the current regl environment
+    //  * props: which are user specified arguments
+    //  * batchId: which is the index of the draw command in the batch
+    //
+    angle: function(context, props, batchId) {
+      return props.speed * context.tick + 0.01 * batchId;
+    },
+
+    // As a shortcut/optimization we can also just read out a property
+    // from the props.  For example, this
+    //
+    scale: regl.prop("scale"),
+    //
+    // is semantically equivalent to
+    //
+    //  scale: function (context, props) {
+    //    return props.scale
+    //  }
+    //
+
+    // Similarly there are shortcuts for accessing context variables
+    width: regl.context("viewportWidth"),
+    height: regl.context("viewportHeight")
+    //
+    // which is the same as writing:
+    //
+    // width: function (context) {
+    //    return context.viewportWidth
+    // }
+    //
   },
 
   count: 3
 });
 
-const loop = regl.frame(({ time }) => {
-  const color = [
-    Math.cos(time * 0.1),
-    Math.sin(time * 0.8),
-    Math.cos(time * 0.003),
-    1
-  ];
-  drawTriangle({ color });
+// drawSpinningStretchyTriangle([
+//   {
+//     // batchId 0
+//     scale: 1,
+//     speed: 1
+//   },
+//   {
+//     // batchId 1
+//     scale: 2,
+//     speed: 0.1
+//   },
+//   {
+//     // batchId 2
+//     scale: 0.25,
+//     speed: 3
+//   }
+// ]);
+
+const loop = regl.frame(context => {
+  drawSpinningStretchyTriangle({
+    scale: 0.4,
+    speed: 0.2
+  });
+
+  if (context.time > 10.0) {
+    loop.cancel();
+  }
 });
