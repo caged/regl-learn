@@ -4,15 +4,7 @@
   "description": "webgl practice",
   "main": "index.js",
   "scripts": {
-    "hello-world":
-      "glsl-server hello-world/index.js --dir hello-world --host 127.0.0.1 --title hello-world",
-    "regl-hello-world":
-      "glsl-server regl-hello-world/index.js --debug --host 127.0.0.1 --title regl-hello-world",
-    "draw-points":
-      "glsl-server draw-points/index.js --host 127.0.0.1 --title draw-points",
-    "particles":
-      "glsl-server particles/index.js --host 127.0.0.1 --title particles",
-    "uniforms": "glsl-server uniforms"
+    "start": "glsl-server --host 127.0.0.1"
   },
   "repository": {
     "type": "git",
