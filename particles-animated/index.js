@@ -1,7 +1,14 @@
+//
+//
+// WARNING: While this works for animating points, it's _very_ inneficient since position
+// updates are computed on the CPU.  I wouldn't recommend this, but it was a step on my
+// journey to understanding animation points with webgl.
+//
+//
 const regl = require("regl")(document.body);
 const d3 = require("d3");
 
-const numPoints = 10000;
+const numPoints = 1000;
 
 // dimensions of the viewport we are drawing in
 const width = window.innerWidth;
@@ -16,35 +23,43 @@ let points = d3.range(numPoints).map(i => ({
   x: rng(),
   y: rng(),
   xv: rngv(),
-  yv: rngv()
+  yv: rngv(),
+  c: [Math.random(), Math.random(), 0.5, 1.0]
 }));
 
 const drawPoints = regl({
   frag: `
     precision mediump float;
+    varying vec4 fill;
 
     void main() {
+      // Most of this is drawing a circle taken from
+      // https://www.desultoryquest.com/blog/drawing-anti-aliased-circular-points-using-opengl-slash-webgl/
       float r = 0.0, delta = 0.0, alpha = 1.0;
       vec2 cxy = 2.0 * gl_PointCoord - 1.0;
       r = dot(cxy, cxy);
       if (r > 1.0) {
           discard;
       }
-      gl_FragColor = vec4(0, 1, 0, 1) * alpha;
+      gl_FragColor = vec4(fill) * alpha;
     }
   `,
   vert: `
     precision mediump float;
     attribute vec2 position;
+    attribute vec4 color;
+    varying vec4 fill;
 
     void main() {
-      gl_PointSize = 9.0;
+      fill = color;
+      gl_PointSize = 5.0;
       gl_Position = vec4(position, 0, 1);
     }
   `,
 
   attributes: {
-    position: (ctx, props) => props.points.map(p => [p.x, p.y])
+    position: (ctx, props) => props.points.map(p => [p.x, p.y]),
+    color: points.map(p => p.c)
   },
 
   uniforms: {},
@@ -72,10 +87,3 @@ regl.frame(({ tick }) => {
 
   drawPoints({ points });
 });
-
-// regl.clear({
-//   color: [0, 0, 0, 1],
-//   depth: 1
-// });
-//
-// drawPoints({ points });
