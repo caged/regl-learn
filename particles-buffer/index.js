@@ -8,17 +8,15 @@
 const regl = require("regl")(document.body);
 const d3 = require("d3");
 
-const numPoints = 100000;
+const numPoints = 250000;
 
 // Size of vertex in bytes (4.0 is GL_FLOAT size)
-const vertSize = 4 * 7;
+const vertSize = 4 * 8;
 
-// dimensions of the viewport we are drawing in
-const width = window.innerWidth;
-const height = window.innerHeight;
+// random number generator for position
+const rng = d3.randomNormal(0, 0.5);
 
-// random number generator from d3-random
-const rng = d3.randomNormal(0, 0.4);
+// random number generator for velocity
 const rngv = d3.randomNormal(0.0001, 0.001);
 
 // create initial set of points
@@ -35,7 +33,8 @@ const points = regl.buffer(
 
         Math.random(), // red
         Math.random(), // green
-        0.5 // blue
+        0.5, // blue
+        1.0 // alpha
       ];
     })
 );
@@ -45,24 +44,27 @@ const drawPoints = regl({
   stencil: { enable: false },
   frag: `
     precision mediump float;
-    varying vec3 fill;
+    varying vec4 fill;
 
     void main() {
-      gl_FragColor = vec4(fill, 1);
+      vec2 cxy = 2.0 * gl_PointCoord - 1.0;
+      float r = dot(cxy, cxy);
+      if (r > 1.0) discard;
+
+      gl_FragColor = vec4(fill);
     }
   `,
   vert: `
     precision mediump float;
     attribute vec2 position;
     attribute vec2 velocity;
-    attribute vec3 color;
+    attribute vec4 color;
     uniform float tick;
-    uniform float time;
-    varying vec3 fill;
+    varying vec4 fill;
 
     void main() {
       vec2 newpos = vec2(position.x + velocity.x * tick, position.y + velocity.y * tick);
-      gl_PointSize = 2.0;
+      gl_PointSize = 3.0;
       gl_Position = vec4(newpos, 0, 1);
       fill = color;
     }
