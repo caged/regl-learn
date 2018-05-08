@@ -1,10 +1,3 @@
-//
-//
-// WARNING: While this works for animating points, it's _very_ inneficient since position
-// updates are computed on the CPU.  I wouldn't recommend this, but it was a step on my
-// journey to understanding animation points with webgl.
-//
-//
 const regl = require("regl")(document.body);
 const d3 = require("d3");
 
