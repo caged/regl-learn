@@ -10,7 +10,9 @@
     "type": "git",
     "url": "git+https://github.com/Caged/webgl-start.git"
   },
-  "keywords": ["webgl"],
+  "keywords": [
+    "webgl"
+  ],
   "author": "Justin Palmer",
   "license": "MIT",
   "bugs": {
@@ -19,6 +21,7 @@
   "homepage": "https://github.com/Caged/webgl-start#readme",
   "dependencies": {
     "d3": "^4.12.2",
+    "fps-indicator": "^1.2.1",
     "regl": "^1.3.0",
     "three": "^0.89.0"
   },

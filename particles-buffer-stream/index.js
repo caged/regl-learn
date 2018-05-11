@@ -1,6 +1,8 @@
 const regl = require("regl")(document.body);
 const d3 = require("d3");
-
+const fps = require("fps-indicator")({
+  style: "background:rgba(255, 255, 255, 0.9); padding: 0.2rem"
+});
 // How many points to draw
 const numPoints = 1000000;
 
