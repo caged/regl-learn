@@ -21,6 +21,14 @@ const rng = d3.randomNormal(0, 0.4);
 // random number generator for velocity
 const rngv = d3.randomNormal(0.0001, 0.001);
 
+// Allocate a dynamic buffer that can store
+// our points
+const points = regl.buffer({
+  usage: "dynamic",
+  type: "float",
+  length: vertSize * numPoints
+});
+
 // Debug container
 const debug = d3
   .select(document.body)
@@ -29,14 +37,6 @@ const debug = d3
     "style",
     `padding:10px;background-color:#fff;position:absolute;right:0;top:0;color:green;font-family:courier`
   );
-
-// Allocate a dynamic buffer that can store
-// our points
-const points = regl.buffer({
-  usage: "dynamic",
-  type: "float",
-  length: vertSize * numPoints
-});
 
 const drawPoints = regl({
   profile: true,
