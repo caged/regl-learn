@@ -1,10 +1,9 @@
 const regl = require("regl")(document.body);
 const d3 = require("d3");
 
-// dimensions of the viewport we are drawing in
-const width = window.innerWidth;
-const height = window.innerHeight;
-
+// You can't actually tweak this on many environments.  Drawing thick lines with
+// webgl is much more complex.  See https://github.com/jpweeks/regl-line-builder for a
+// convenient API
 const lineWidth = 1;
 
 var lines = regl.elements({
