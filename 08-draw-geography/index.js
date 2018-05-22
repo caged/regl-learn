@@ -65,7 +65,7 @@ d3.json('https://unpkg.com/us-atlas@1/us/10m.json').then(us => {
     depth: 1
   })
 
-  for (const mesh of usMesh) {
+  for (const mesh of usMesh.coordinates) {
     // Map xy points to the webgl coordinate system
     const positions = mesh.map(d => [x(d[0]), y(d[1])])
 
