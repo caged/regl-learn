@@ -1,16 +1,15 @@
-const regl = require("regl")(document.body);
-const d3 = require("d3");
+const regl = require('regl')(document.body)
 
 // You can't actually tweak this on many environments.  Drawing thick lines with
 // webgl is much more complex.  See https://github.com/jpweeks/regl-line-builder for a
 // convenient API
-const lineWidth = 1;
+const lineWidth = 1
 
-var lines = regl.elements({
-  primitive: "lines",
+const lines = regl.elements({
+  primitive: 'lines',
   // data represents the index of the `position` data
   data: [[0, 1], [1, 2], [2, 3], [3, 0]]
-});
+})
 
 const drawLines = regl({
   frag: `
@@ -43,12 +42,12 @@ const drawLines = regl({
     color: [1, 0, 0, 1]
   },
 
-  lineWidth: lineWidth
-});
+  lineWidth
+})
 
 regl.clear({
   color: [0, 0, 0, 1],
   depth: 1
-});
+})
 
-drawLines({});
+drawLines({})
