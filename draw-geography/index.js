@@ -2,11 +2,21 @@ const regl = require("regl")(document.body);
 const d3 = require("d3");
 const topojson = require("topojson-client");
 
-const width = window.innerWidth;
-const height = window.innerHeight;
+// The default us-atlas topojson size is 960x600.  If we wanted to dynamically compute the bounds
+// of this we could loop through every point in the geometry and get the extent. See
+// https://github.com/topojson/us-atlas#us/10m.json for details.
+const width = 960;
+const height = 600;
 
-const x = d3.scaleLinear().range([-1, 1]);
-const y = d3.scaleLinear().range([1, -1]);
+const x = d3
+  .scaleLinear()
+  .range([-1, 1])
+  .domain([0, width]);
+
+const y = d3
+  .scaleLinear()
+  .range([1, -1])
+  .domain([0, height]);
 
 // You can't actually tweak this on many environments.  Drawing thick lines with
 // webgl is much more complex.  See https://github.com/jpweeks/regl-line-builder for a
@@ -40,38 +50,36 @@ const drawLines = regl({
   },
 
   uniforms: {
-    color: [1, 0, 0, 1]
+    color: [0, 1, 0, 1]
   },
 
   lineWidth: lineWidth
 });
 
 d3.json("https://unpkg.com/us-atlas@1/us/10m.json").then((us, err) => {
-  const { states } = us.objects;
-  const statesGeo = topojson.feature(us, states);
-  const oregon = statesGeo.features[19];
-  const oregonGeo = oregon.geometry.coordinates[0][0];
-  const xext = d3.extent(oregonGeo, d => d[0]);
-  const yext = d3.extent(oregonGeo, d => d[1]);
-
-  x.domain(xext);
-  y.domain(yext);
-
-  const positions = oregonGeo.map(d => [x(d[0]), y(d[1])]);
-  const indexes = positions.reduce((a, b, i) => {
-    if (i + 1 < positions.length) a.push([i, i + 1]);
-    return a;
-  }, []);
-
-  const elements = regl.elements({
-    primitive: "lines",
-    data: indexes
-  });
+  const usMesh = topojson.mesh(us);
 
   regl.clear({
     color: [0, 0, 0, 1],
     depth: 1
   });
 
-  drawLines({ elements, positions });
+  usMesh.coordinates.forEach(mesh => {
+    // Map xy points to the webgl coordinate system
+    const positions = mesh.map(d => [x(d[0]), y(d[1])]);
+
+    // Build a list of indexes that map to the positions array
+    // [[0, 1], [1, 2], ...]
+    const indexes = mesh.reduce((a, b, i) => {
+      if (i + 1 < mesh.length) a.push([i, i + 1]);
+      return a;
+    }, []);
+
+    const elements = regl.elements({
+      primitive: "lines",
+      data: indexes
+    });
+
+    drawLines({ elements, positions });
+  });
 });
