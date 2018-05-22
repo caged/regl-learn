@@ -4,7 +4,7 @@
   "description": "webgl practice",
   "main": "index.js",
   "scripts": {
-    "start": "glsl-server --host 127.0.0.1"
+    "start": "shader-reload-cli --host 127.0.0.1"
   },
   "repository": {
     "type": "git",
@@ -31,6 +31,6 @@
   "devDependencies": {
     "eslint": "^4.19.1",
     "eslint-plugin-github": "^1.0.0",
-    "shader-reload": "^1.2.2"
+    "shader-reload-cli": "^1.0.0"
   }
 }
