@@ -2,14 +2,12 @@ const regl = require('regl')(document.body)
 const shader = require('./index.shader')
 const d3 = require('d3')
 
-const numPoints = 100000
-const width = window.innerWidth
-const height = window.innerHeight
+const numPoints = 10000
 
-const rng = d3.randomNormal(0, 0.25)
+const rng = d3.randomNormal(0.0, 0.5)
 const points = d3.range(numPoints).map(() => ({
-  x: rng() * width + width / 2,
-  y: rng() * height + height / 2,
+  x: rng(),
+  y: rng(),
   color: [1, Math.random(), Math.random(), 0.2]
 }))
 
@@ -22,9 +20,7 @@ const drawPoints = regl({
   },
 
   uniforms: {
-    pointWidth: regl.prop('pointWidth'),
-    stageWidth: regl.prop('stageWidth'),
-    stageHeight: regl.prop('stageHeight')
+    pointWidth: regl.prop('pointWidth')
   },
 
   count: points.length,
@@ -37,5 +33,7 @@ regl.frame(() => {
     depth: 1
   })
 
-  drawPoints({})
+  drawPoints({
+    pointWidth: 2
+  })
 })
