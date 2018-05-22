@@ -1,18 +1,16 @@
-const regl = require("regl")(document.body);
-const d3 = require("d3");
-const fps = require("fps-indicator")({
-  style: "background:rgba(255, 255, 255, 0.9); padding: 0.2rem"
-});
-const numPoints = 250000;
+const regl = require('regl')(document.body)
+const d3 = require('d3')
+
+const numPoints = 250000
 
 // Size of vertex in bytes (4.0 is GL_FLOAT size)
-const vertSize = 4 * 8;
+const vertSize = 4 * 8
 
 // random number generator for position
-const rng = d3.randomNormal(0, 0.5);
+const rng = d3.randomNormal(0, 0.5)
 
 // random number generator for velocity
-const rngv = d3.randomNormal(0.0001, 0.001);
+const rngv = d3.randomNormal(0.0001, 0.001)
 
 // create initial set of points
 const points = regl.buffer(
@@ -30,13 +28,13 @@ const points = regl.buffer(
         Math.random(), // green
         0.5, // blue
         1.0 // alpha
-      ];
+      ]
     })
-);
+)
 
 const drawPoints = regl({
-  depth: { enable: false },
-  stencil: { enable: false },
+  depth: {enable: false},
+  stencil: {enable: false},
   frag: `
     precision mediump float;
     varying vec4 fill;
@@ -86,21 +84,21 @@ const drawPoints = regl({
   },
 
   uniforms: {
-    tick: ({ tick }) => tick
+    tick: ({tick}) => tick
   },
 
   // specify the number of points to draw
   count: numPoints,
 
   // specify that each vertex is a point (not part of a mesh)
-  primitive: "points"
-});
+  primitive: 'points'
+})
 
-regl.frame(({ tick }) => {
+regl.frame(() => {
   regl.clear({
     color: [0, 0, 0, 1],
     depth: 1
-  });
+  })
 
-  drawPoints({ points });
-});
+  drawPoints({points})
+})
