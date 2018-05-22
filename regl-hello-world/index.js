@@ -1,6 +1,6 @@
-const regl = require("regl")(document.body);
+const regl = require('regl')(document.body)
 
-var drawSpinningStretchyTriangle = regl({
+const drawSpinningStretchyTriangle = regl({
   frag: `
   void main() {
     gl_FragColor = vec4(1, 0, 0, 1);
@@ -30,14 +30,14 @@ var drawSpinningStretchyTriangle = regl({
     //  * props: which are user specified arguments
     //  * batchId: which is the index of the draw command in the batch
     //
-    angle: function(context, props, batchId) {
-      return props.speed * context.tick + 0.01 * batchId;
+    angle: (context, props, batchId) => {
+      return props.speed * context.tick + 0.01 * batchId
     },
 
     // As a shortcut/optimization we can also just read out a property
     // from the props.  For example, this
     //
-    scale: regl.prop("scale"),
+    scale: regl.prop('scale'),
     //
     // is semantically equivalent to
     //
@@ -47,8 +47,8 @@ var drawSpinningStretchyTriangle = regl({
     //
 
     // Similarly there are shortcuts for accessing context variables
-    width: regl.context("viewportWidth"),
-    height: regl.context("viewportHeight")
+    width: regl.context('viewportWidth'),
+    height: regl.context('viewportHeight')
     //
     // which is the same as writing:
     //
@@ -59,7 +59,7 @@ var drawSpinningStretchyTriangle = regl({
   },
 
   count: 3
-});
+})
 
 // drawSpinningStretchyTriangle([
 //   {
@@ -83,9 +83,9 @@ const loop = regl.frame(context => {
   drawSpinningStretchyTriangle({
     scale: 0.4,
     speed: 0.2
-  });
+  })
 
   if (context.time > 10.0) {
-    loop.cancel();
+    loop.cancel()
   }
-});
+})
