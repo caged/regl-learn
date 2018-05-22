@@ -6,30 +6,23 @@
 // the particles-buffer example instead.
 //
 //
-const regl = require("regl")(document.body);
-const d3 = require("d3");
-const fps = require("fps-indicator")({
-  style: "background:rgba(255, 255, 255, 0.9); padding: 0.2rem"
-});
+const regl = require('regl')(document.body)
+const d3 = require('d3')
 
-const numPoints = 1000;
-
-// dimensions of the viewport we are drawing in
-const width = window.innerWidth;
-const height = window.innerHeight;
+const numPoints = 1000
 
 // random number generator from d3-random
-const rng = d3.randomNormal(0, 0.1);
-const rngv = d3.randomNormal(0.0001, 0.001);
+const rng = d3.randomNormal(0, 0.1)
+const rngv = d3.randomNormal(0.0001, 0.001)
 
 // create initial set of points
-let points = d3.range(numPoints).map(i => ({
+const points = d3.range(numPoints).map(() => ({
   x: rng(),
   y: rng(),
   xv: rngv(),
   yv: rngv(),
   c: [Math.random(), Math.random(), 0.5, 1.0]
-}));
+}))
 
 const drawPoints = regl({
   frag: `
@@ -72,22 +65,22 @@ const drawPoints = regl({
   count: points.length,
 
   // specify that each vertex is a point (not part of a mesh)
-  primitive: "points"
-});
+  primitive: 'points'
+})
 
-regl.frame(({ tick }) => {
-  points.forEach(d => {
-    if (d.x >= 1 || d.x <= -1) d.xv = -d.xv;
-    if (d.y >= 1 || d.y <= -1) d.yv = -d.yv;
+regl.frame(() => {
+  for (const d of points) {
+    if (d.x >= 1 || d.x <= -1) d.xv = -d.xv
+    if (d.y >= 1 || d.y <= -1) d.yv = -d.yv
 
-    d.x += d.xv;
-    d.y += d.yv;
-  });
+    d.x += d.xv
+    d.y += d.yv
+  }
 
   regl.clear({
     color: [0, 0, 0, 1],
     depth: 1
-  });
+  })
 
-  drawPoints({ points });
-});
+  drawPoints({points})
+})
