@@ -1,47 +1,42 @@
-const regl = require("regl")(document.body);
-const d3 = require("d3");
-const fps = require("fps-indicator")({
-  style: "background:rgba(255, 255, 255, 0.9); padding: 0.2rem"
-});
+const regl = require('regl')(document.body)
+const d3 = require('d3')
+
 // How many points to draw
-const numPoints = 1000000;
+const numPoints = 1000000
 
 // Size of vertex data in bytes (4.0 is GL_FLOAT size)
-const vertSize = 4 * 8;
+const vertSize = 4 * 8
 
 // The current number of points
-var pointCount = 0;
+let pointCount = 0
 
 // point increment
-var pointIncrement = 1000;
+const pointIncrement = 1000
 
 // random number generator for position
-const rng = d3.randomNormal(0, 0.4);
+const rng = d3.randomNormal(0, 0.4)
 
 // random number generator for velocity
-const rngv = d3.randomNormal(0.0001, 0.001);
+const rngv = d3.randomNormal(0.0001, 0.001)
 
 // Allocate a dynamic buffer that can store
 // our points
 const points = regl.buffer({
-  usage: "dynamic",
-  type: "float",
+  usage: 'dynamic',
+  type: 'float',
   length: vertSize * numPoints
-});
+})
 
 // Debug container
 const debug = d3
   .select(document.body)
-  .append("div")
-  .attr(
-    "style",
-    `padding:10px;background-color:#fff;position:absolute;right:0;top:0;color:green;font-family:courier`
-  );
+  .append('div')
+  .attr('style', `padding:10px;background-color:#fff;position:absolute;right:0;top:0;color:green;font-family:courier`)
 
 const drawPoints = regl({
   profile: true,
-  depth: { enable: false },
-  stencil: { enable: false },
+  depth: {enable: false},
+  stencil: {enable: false},
   frag: `
     precision mediump float;
     varying vec4 fill;
@@ -91,15 +86,15 @@ const drawPoints = regl({
   },
 
   uniforms: {
-    tick: ({ tick }) => tick
+    tick: ({tick}) => tick
   },
 
   // specify the number of points to draw
   count: () => pointCount,
 
   // specify that each vertex is a point (not part of a mesh)
-  primitive: "points"
-});
+  primitive: 'points'
+})
 
 function makePoint() {
   if (pointCount < numPoints) {
@@ -107,9 +102,7 @@ function makePoint() {
     const newPoints = Array(pointIncrement)
       .fill()
       .map(() => {
-        const { r, g, b } = d3
-          .hsl(Math.random() * 60, 1, Math.max(0.2, Math.random() * 1))
-          .rgb();
+        const {r, g, b} = d3.hsl(Math.random() * 60, 1, Math.max(0.2, Math.random() * 1)).rgb()
         return [
           rng(), // x
           rng(), // y
@@ -121,25 +114,23 @@ function makePoint() {
           g / 255, // green
           b / 255, // blue
           1.0 // alpha
-        ];
-      });
+        ]
+      })
 
-    points.subdata(newPoints, pointCount * vertSize);
-    pointCount += pointIncrement;
-    debug.text(`${pointCount} points`);
-  } else {
-    console.log(regl.stats, drawPoints.stats);
+    points.subdata(newPoints, pointCount * vertSize)
+    pointCount += pointIncrement
+    debug.text(`${pointCount} points`)
   }
 }
 
-regl.frame(({ tick }) => {
+regl.frame(() => {
   // Every tick, add a `pointIncrement` num points to the buffer
-  makePoint();
+  makePoint()
 
   regl.clear({
     color: [0, 0, 0, 1],
     depth: 1
-  });
+  })
 
-  drawPoints({ points });
-});
+  drawPoints({points})
+})
