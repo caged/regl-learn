@@ -1,4 +1,6 @@
-const regl = require('regl')(document.body)
+const regl = require('regl')({
+  container: document.body
+})
 const d3 = require('d3')
 
 // How many points to draw
