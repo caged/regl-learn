@@ -23,7 +23,7 @@ const totalChunks = numPoints / pointIncrement
 const rng = d3.randomNormal(0.001, 0.1)
 
 // random number generator for velocity
-const rngv = d3.randomNormal(0.1, 0.5)
+const rngv = d3.randomNormal(3, 3.5)
 
 // Allocate a dynamic buffer that can store
 // our points
@@ -130,12 +130,12 @@ function makePoint(time) {
     const newPoints = Array(pointIncrement)
       .fill()
       .map(() => {
-        const {r, g, b} = d3.hsl(Math.random() * 60, 1, Math.max(0.2, Math.random() * 1)).rgb()
+        // const {r, g, b} = d3.hsl(Math.random() * 60, 1, Math.max(0.2, Math.random() * 1)).rgb()
         return [
-          rng(), // x
+          -0.5, // x
           rng(), // y
 
-          1.0, // endx
+          0.5, // endx
           0.0, // endy
 
           rngv(), // x velocity
@@ -143,9 +143,9 @@ function makePoint(time) {
 
           time, // birth time particle was born
 
-          r / 255, // red
-          g / 255, // green
-          b / 255, // blue
+          Math.random() * 100 / 255, // red
+          Math.random() * 255 / 255, // green
+          Math.random() * 255 / 255, // blue
           1.0 // alpha
         ]
       })
