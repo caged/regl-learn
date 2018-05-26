@@ -13,7 +13,11 @@ const vertSize = 4 * 11
 let pointCount = 0
 
 // point increment
-const pointIncrement = 2
+const pointIncrement = 10
+
+// chunk counter
+let chunk = 0
+const totalChunks = numPoints / pointIncrement
 
 // random number generator for position
 const rng = d3.randomNormal(0.001, 0.1)
@@ -142,8 +146,25 @@ function makePoint(time) {
         ]
       })
 
-    points.subdata(newPoints, pointCount * vertSize)
-    pointCount += pointIncrement
+    // We are contiously streaming in new data, but we don't want to have a buffer with unbounded
+    // growth.  What we're doing here is updating the buffer subdata in chunks and starting over
+    // at byte offset 0 when the totalChunks limit has been hit.
+    //
+    // This makes the assumption that by the time we get to the end of the buffer, the data at the
+    // beginning of the buffer is ok to be replaced.  Put another way, by the time we animate in
+    // the last point, we assume the first points are "done" or have reached their destination and
+    // are ready to be replaced.
+    //
+    // This nice thing about this approach is that it allows us to replace data at the beginning of
+    // the buffer without having to store the data and itterate over every point during every tick
+    // to do some check.
+    if (chunk >= totalChunks) chunk = 0
+    points.subdata(newPoints, chunk * pointIncrement * vertSize)
+
+    if (pointCount + pointIncrement < numPoints) {
+      pointCount = chunk * pointIncrement
+    }
+    chunk += 1
   }
 }
 
