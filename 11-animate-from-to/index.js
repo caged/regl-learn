@@ -114,7 +114,9 @@ const drawPoints = regl({
   },
 
   // specify the number of points to draw
-  count: () => pointCount,
+  count: () => {
+    return pointCount + pointIncrement
+  },
 
   // specify that each vertex is a point (not part of a mesh)
   primitive: 'points'
