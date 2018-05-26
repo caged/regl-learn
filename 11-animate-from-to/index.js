@@ -68,9 +68,11 @@ const drawPoints = regl({
       // vec2 newpos = (position + d) * (time - birth);
 
       // Works with consitent velocity towards endpos
-      vec2 newpos = position + (d * ((time - birth) / 3.0));
+      vec2 newpos = position + (d * ((time - birth) / abs(velocity.x)));
 
-      gl_PointSize = 10.0;
+      // If we've made it to the x position, skip drawing the point
+      gl_PointSize = newpos.x > endpos.x ? 0.0 : 10.0;
+
       gl_Position = vec4(newpos, 0, 1);
       fill = color;
     }
