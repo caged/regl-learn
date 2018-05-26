@@ -114,7 +114,7 @@ const drawPoints = regl({
   primitive: 'points'
 })
 
-function makePoint(birth) {
+function makePoint(time) {
   if (pointCount < numPoints) {
     // Add vertext data as subdata
     const newPoints = Array(pointIncrement)
@@ -131,7 +131,7 @@ function makePoint(birth) {
           rngv(), // x velocity
           rngv(), // y velocity
 
-          birth,
+          time, // birth time particle was born
 
           r / 255, // red
           g / 255, // green
@@ -145,12 +145,17 @@ function makePoint(birth) {
   }
 }
 
-regl.frame(({time}) => {
+makePoint(0)
+regl.frame(({time, tick}) => {
   regl.clear({
     color: [0, 0, 0, 1],
     depth: 1
   })
 
   drawPoints({points})
-  makePoint(time)
+
+  // Every 60 frames (about 1 second), generate new points
+  if (tick % 60 === 0) {
+    makePoint(time)
+  }
 })
