@@ -162,7 +162,7 @@ const drawNode = regl({
     enable: false
   },
   cull: {
-    enable: true
+    enable: false
   },
   count: 6
 })
@@ -173,7 +173,6 @@ function makePoint(time) {
     const newPoints = Array(pointIncrement)
       .fill()
       .map(() => {
-        // const {r, g, b} = d3.hsl(Math.random() * 60, 1, Math.max(0.2, Math.random() * 1)).rgb()
         return [
           -0.5, // x
           rng(), // y
@@ -199,12 +198,15 @@ function makePoint(time) {
     //
     // This makes the assumption that by the time we get to the end of the buffer, the data at the
     // beginning of the buffer is ok to be replaced.  Put another way, by the time we animate in
-    // the last point, we assume the first points are "done" or have reached their destination and
+    // the last points, we assume the first points are "done" and have reached their destination and
     // are ready to be replaced.
     //
     // This nice thing about this approach is that it allows us to replace data at the beginning of
     // the buffer without having to store the data and itterate over every point during every tick
     // to do some check.
+    //
+    // The drawbacks of this approach are that we never know for sure if the data we're replacing has
+    // actually made it to the target location.
     if (chunk >= totalChunks) chunk = 0
     points.subdata(newPoints, chunk * pointIncrement * vertSize)
 
@@ -215,15 +217,19 @@ function makePoint(time) {
   }
 }
 
+// Make the first batch of points
 makePoint(0)
+
 regl.frame(({time, tick}) => {
   regl.clear({
     color: [0, 0, 0, 1],
     depth: 1
   })
 
+  // Draw the points
   drawPoints({points})
 
+  // Draw some origin and destination nodes.
   drawNode([
     {
       scale: [0.01, 0.1],
