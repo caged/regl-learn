@@ -4,7 +4,7 @@ const regl = require('regl')({
 const d3 = require('d3')
 
 // How many points to draw
-const numPoints = 5000
+const numPoints = 50000
 
 // Size of vertex data in bytes (4.0 is GL_FLOAT size)
 const vertSize = 4 * 11
