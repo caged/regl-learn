@@ -13,7 +13,7 @@ const vertSize = 4 * 11
 let pointCount = 0
 
 // point increment
-const pointIncrement = 1
+const pointIncrement = 3
 
 // chunk counter
 let chunk = 0
@@ -235,8 +235,8 @@ regl.frame(({time, tick}) => {
     }
   ])
 
-  // Every 1 frames generate a new point
-  if (tick % 1 === 0) {
+  // Every `n` frames generate a new point
+  if (tick % 10 === 0) {
     makePoint(time)
   }
 })
