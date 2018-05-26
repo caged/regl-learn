@@ -13,17 +13,17 @@ const vertSize = 4 * 11
 let pointCount = 0
 
 // point increment
-const pointIncrement = 10
+const pointIncrement = 1
 
 // chunk counter
 let chunk = 0
 const totalChunks = numPoints / pointIncrement
 
 // random number generator for position
-const rng = d3.randomNormal(0.001, 0.1)
+const rng = d3.randomUniform(0.15, -0.15)
 
 // random number generator for velocity
-const rngv = d3.randomNormal(3, 3.5)
+const rngv = d3.randomUniform(2, 4)
 
 // Allocate a dynamic buffer that can store
 // our points
@@ -68,12 +68,12 @@ const drawPoints = regl({
       // vec2 newpos = (position + d) * (time - birth);
 
       // Works with consitent velocity towards endpos
-      vec2 newpos = position + (d * ((time - birth) / abs(velocity.x)));
+      vec2 newpos = position + (d * ((time - birth) / velocity.x));
 
       // If we've made it to the x position, skip drawing the point
-      gl_PointSize = newpos.x > endpos.x ? 0.0 : 10.0;
-
-      gl_Position = vec4(newpos, 0, 1);
+      // gl_PointSize = newpos.x > endpos.x ? 0.0 : 10.0;
+      gl_Position = newpos.x > endpos.x ? vec4(-2, -1, 0, 1) : vec4(newpos, 0, 1);
+      gl_PointSize = 6.0;
       fill = color;
     }
   `,
@@ -122,6 +122,49 @@ const drawPoints = regl({
 
   // specify that each vertex is a point (not part of a mesh)
   primitive: 'points'
+})
+
+const drawNode = regl({
+  frag: `
+    precision mediump float;
+
+    void main() {
+      gl_FragColor = vec4(1.0, 1.0, 0.0, 1);
+    }
+  `,
+  vert: `
+    precision mediump float;
+    attribute vec2 position;
+    uniform vec2 offset;
+    uniform vec2 scale;
+    uniform float viewportWidth;
+    uniform float viewportHeight;
+
+    void main() {
+      float r = (viewportWidth) / (viewportHeight);
+      gl_Position = vec4(position.xy * scale * vec2(1.0, r) + offset, 0, 1);
+    }
+  `,
+
+  attributes: {
+    position: [[-1, -1], [+1, +1], [-1, +1], [-1, -1], [+1, -1], [+1, +1]]
+  },
+
+  uniforms: {
+    offset: regl.prop('offset'),
+    scale: regl.prop('scale'),
+    viewportWidth: regl.context('viewportWidth'),
+    viewportHeight: regl.context('viewportHeight')
+  },
+
+  // specify the number of points to draw
+  depth: {
+    enable: false
+  },
+  cull: {
+    enable: true
+  },
+  count: 6
 })
 
 function makePoint(time) {
@@ -181,8 +224,19 @@ regl.frame(({time, tick}) => {
 
   drawPoints({points})
 
-  // Every 60 frames (about 1 second), generate new points
-  if (tick % 60 === 0) {
+  drawNode([
+    {
+      scale: [0.01, 0.1],
+      offset: [-0.5, 0.0]
+    },
+    {
+      scale: [0.01, 0.01],
+      offset: [0.5, 0.0]
+    }
+  ])
+
+  // Every 1 frames generate a new point
+  if (tick % 1 === 0) {
     makePoint(time)
   }
 })
