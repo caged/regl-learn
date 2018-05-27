@@ -1,16 +1,15 @@
 const regl = require('regl')({
-  container: document.body,
-  extensions: ['EXT_blend_minmax']
+  container: document.body
 })
 const d3 = require('d3')
 
-const numPoints = 200000
+const numPoints = 20000
 
 // Size of vertex in bytes (4.0 is GL_FLOAT size)
-const vertSize = 4 * 8
+const vertSize = 4 * 10
 
 // random number generator for position
-const rng = d3.randomNormal(0, 0.1)
+const rng = d3.randomNormal(0, 0.15)
 
 // random number generator for velocity
 const rngv = d3.randomNormal(0.0001, 0.0005)
@@ -30,12 +29,10 @@ const points = regl.buffer(
         69 / 255, // red
         173 / 255, // green
         233 / 255, // blue
-        1.0, // alpha
 
         17 / 255, // red
         17 / 255, // green
-        98 / 255, // blue
-        1.0 // alpha
+        98 / 255 // blue
       ]
     })
 )
@@ -58,38 +55,43 @@ const drawPoints = regl({
   },
   frag: `
     precision mediump float;
-    varying vec4 fill;
+    varying vec3 fill;
 
     void main() {
       vec2 cxy = 2.0 * gl_PointCoord - 1.0;
       float r = dot(cxy, cxy);
       if (r > 1.0) discard;
 
-      gl_FragColor = vec4(fill);
+
+      gl_FragColor = vec4(fill, 1.0);
     }
   `,
   vert: `
     #define M_2PI   6.28318530717958647692528676655900
-    #pragma glslify: blendColorDodge = require(glsl-blend/color-dodge)
     precision mediump float;
     attribute vec2 position;
     attribute vec2 velocity;
-    attribute vec4 color1;
-    attribute vec4 color2;
+    attribute vec3 color1;
+    attribute vec3 color2;
     uniform float tick;
     uniform float time;
-    varying vec4 fill;
+    varying vec3 fill;
     vec3 foobar;
 
     void main() {
-      float colorspeed = 2.0;
-      float colorfreq = 50.0;
+      float colorspeed = 5.0;
+      float colorfreq = 3.0;
 
       vec2 newpos = vec2(position.x + velocity.x * tick, position.y + velocity.y * tick);
       gl_PointSize = 7.0;
       gl_Position = vec4(newpos, 0, 1);
-      // foobar = blendColorDodge(vec3(1.0, 1.0, 0.0), vec3(0.0, 1.0, 0.0), 1.0);
-      fill = mix(color1, color2, sin(colorspeed * time + colorfreq * position.x * M_2PI) / 2.0 + 0.5);;
+
+      // Not necissary, but makes colors a little more interesting
+      fill = mix(
+        mix(color1, vec3(1, 1, 1), cos(colorspeed * time + colorfreq * position.x * M_2PI) / 2.0 + 0.5),
+        color2,
+        sin(colorspeed * time + colorfreq * position.x * M_2PI) / 2.0 + 0.5
+      );
     }
   `,
 
@@ -115,7 +117,7 @@ const drawPoints = regl({
     color2: {
       buffer: points,
       stride: vertSize,
-      offset: 32
+      offset: 28
     }
   },
 
