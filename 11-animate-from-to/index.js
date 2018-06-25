@@ -62,6 +62,7 @@ const drawPoints = regl({
 
     void main() {
       vec2 d = endpos - position;
+      // vec2 d = distance(position, endpos);
       // vec2 newpos = (position + d + velocity) * (tick / birth);
 
       // Works with consitent velocity towards endpos
