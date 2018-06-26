@@ -10,7 +10,9 @@
     "type": "git",
     "url": "git+https://github.com/Caged/webgl-start.git"
   },
-  "keywords": ["webgl"],
+  "keywords": [
+    "webgl"
+  ],
   "author": "Justin Palmer",
   "license": "MIT",
   "bugs": {
@@ -31,6 +33,8 @@
   "devDependencies": {
     "eslint": "^4.19.1",
     "eslint-plugin-github": "^1.0.0",
+    "resl": "^1.0.3",
+    "shader-reload": "^2.0.1",
     "shader-reload-cli": "^1.0.0"
   }
 }
